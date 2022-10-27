@@ -1,0 +1,62 @@
+# See comments in job below
+# Example usage:
+#
+# jobs:
+#   show-env:
+#     runs-on: ubuntu-latest
+#
+#     steps:
+#       - id: env_vars
+#         uses: ./.github/workflows/env_setup
+#       - run: echo "app name =>${{ steps.env_vars.outputs.app_name }}<="
+#
+# ref: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
+
+name: "env-setup"
+description: "set variables based on environment"
+outputs:
+  # declare outputs here
+  app_name:
+    description: azure app name
+    value: ${{ steps.vars.outputs.app_name }}
+  env_name:
+    description: environment name
+    value: ${{ steps.vars.outputs.env_name }}
+runs:
+  using: "composite"
+  steps:
+    #
+    # PRODUCTION (commit to main)
+    # Add production variables here
+    #
+    - shell: bash
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        cat<<___EOF___>>$GITHUB_ENV
+        ENV_NAME=production
+        APP_NAME=app-hydra-api-prod
+        ___EOF___
+
+    #
+    # NONPRODUCTION: (commit to other than main)
+    # Add nonproduction variables here
+    #
+    - shell: bash
+      if: ${{ github.ref  != 'refs/heads/main' }}
+      run: |
+        cat<<___EOF___>>$GITHUB_ENV
+        ENV_NAME=nonproduction
+        APP_NAME=appService-hydra-nonprod
+        ___EOF___
+
+    # SET OUTPUTS
+    # Mark the variable as an output here
+    - id: vars
+      shell: bash
+      run: |
+        echo "::set-output name=app_name::$(echo $APP_NAME)"
+        echo "::set-output name=env_name::$(echo $ENV_NAME)"
+
+    - shell: bash
+      run: cat $GITHUB_ENV
+      if: ${{ env.DEBUG_CI }}

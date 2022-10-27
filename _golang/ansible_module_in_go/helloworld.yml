@@ -1,0 +1,31 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: ping
+      ping:
+      when: ansible_connection|default('ssh') != 'winrm'
+
+    - name: win_ping
+      win_ping:
+      when: ansible_connection|default('ssh') == 'winrm'
+
+    - name: Hello, World!
+      helloworld:
+
+    - name: Hello, Ansible!
+      helloworld:
+        name: Ansible
+
+    - name: Async Hello, World!
+      helloworld:
+      async: 1
+      poll: 1
+      when: ansible_connection|default('ssh') != 'winrm'
+
+    - name: Async Hello, Ansible!
+      helloworld:
+        name: Ansible
+      async: 1
+      poll: 1
+      when: ansible_connection|default('ssh') != 'winrm'

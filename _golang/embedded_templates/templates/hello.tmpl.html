@@ -1,0 +1,13 @@
+<!-- should be in ./templates relative to embed_template.go -->
+<html>
+
+<body>
+    <div>Name: {{ .Name }}</div>
+    <div>
+        {{ range .Things -}}
+        <div>{{ . | unescape }}</div>
+        {{ end }}
+    </div>
+</body>
+
+</html>

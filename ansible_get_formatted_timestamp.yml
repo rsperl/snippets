@@ -1,0 +1,35 @@
+---
+- name: Two ways to get a formatted timestamp
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+    #
+    # using facts
+    #
+    - block:
+        - name: get facts
+          register: s
+          setup:
+            filter: ansible_date_time
+
+        - name: form timestamp
+          set_fact:
+            ts: "{{ ansible_date_time.date }}_{{ ansible_date_time.time |replace(':', '') }}"
+
+        - name: dump timestamp
+          debug:
+            msg: "{{ ts }}"
+
+    #
+    # running the date command
+    #
+    - block:
+        - name: run date command
+          register: d
+          command: date "+%Y-%d-%m_%H%M%S"
+
+        - name: dump timestamp
+          debug:
+            msg: "{{ d.stdout }}"
