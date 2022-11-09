@@ -5,7 +5,7 @@
 # Usage: update_vscode_macos.sh [stable|insider]
 # Default version is insider
 #
-# See comments below on further customization, like skipping the 
+# See comments below on further customization, like skipping the
 # update of an extension or for installing a prelease version of
 # an extension.
 
@@ -40,14 +40,15 @@ CODE="$CURRENT_APP/Contents/Resources/app/bin/code"
 SKIP_EXTENSIONS=(
 )
 
-# Extensions listed here will have --prerelease added to the installation
-# If you already have a prerelease extension and you don't add it here, 
-# then every time that extension is activated, VSCode will prompt you to 
+# Extensions listed here will have --pre-release added to the installation
+# If you already have a prerelease extension and you don't add it here,
+# then every time that extension is activated, VSCode will prompt you to
 # update to the prerelease version.
 INSTALL_PRERELEASE=(
   GitHub.vscode-pull-request-github
   GitHub.remotehub
   ms-toolsai.jupyter
+  ms-vscode-remote.vscode-remote-extensionpack
 )
 
 function in_array() {
