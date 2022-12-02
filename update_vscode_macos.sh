@@ -10,6 +10,7 @@
 # an extension.
 
 VERSION="${1:-insider}"
+SHA_VERSION="${2:-}"
 
 if [[ $VERSION != "insider" ]] && [[ $VERSION != "stable" ]]; then
   echo "Usage: $0 <insider|stable>"
@@ -107,6 +108,9 @@ download_url=$(curl --silent -LI "$URL" | grep Location | tail -1 | awk '{print 
 
 # get version hash from url
 latest_hash=$(echo "$download_url" | awk -F/ '{print $(NF-1)}')
+if [[ ! "$SHA_VERSION"  == "" ]]; then
+    download_url="${download_url//$latest_hash/$SHA_VERSION}"
+fi
 
 # get hash from installation version
 set +e
@@ -116,7 +120,9 @@ fi
 set -e
 
 # Exit if latest version is already installed
-if [[ $latest_hash == "$installed_version" ]]; then
+if [[ "$SHA_VERSION" == "$installed_version" ]]; then
+    echo "Requested version is installed"
+elif [[ ! "$SHA_VERSION" == "" ]] && [[ $latest_hash == "$installed_version" ]]; then
   echo "Latest version is installed"
   update_extensions
   exit 0
@@ -124,6 +130,7 @@ fi
 
 echo "Latest hash:    $latest_hash"
 echo "Installed hash: $installed_version"
+echo "Requested hash: $SHA_VERSION"
 
 # get filename
 filename=$(basename "$download_url")-$latest_hash
