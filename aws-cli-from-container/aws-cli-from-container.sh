@@ -7,7 +7,8 @@ VERSION="${1:-latest}"
 
 echo "Note - a specific version may be used by passing an image tag"
 echo "Using image tag '$VERSION'"
-IMAGE=public.ecr.aws/aws-cli/aws-cli:$VERSION
+# IMAGE=public.ecr.aws/aws-cli/aws-cli:$VERSION
+IMAGE=aws-cli:$VERSION
 BASHRC=$HOME/tmp/aws-cli-bashrc
 
 CLI="$(basename "$IMAGE")"
@@ -17,8 +18,10 @@ mkdir -p $HOME/tmp
 cat <<___EOF___ >$BASHRC
 # File is created dynamically and used by the aws-cli container
 
+set -o 
 export PATH=.:$HOME/bin:$PATH
 export PS1="[$CLI] \s\$ "
+export KUBECONFIG="$HOME/.kube"
 alias k=kubectl
 
 ___EOF___

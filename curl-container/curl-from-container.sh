@@ -8,8 +8,8 @@ VERSION="${1:-latest}"
 echo "Note - a specific version may be used by passing an image tag"
 echo "Using image tag '$VERSION'"
 
-IMAGE=mcr.microsoft.com/azure-cli:$VERSION
-BASHRC=$HOME/tmp/az-cli-bashrc
+IMAGE=my-curl:$VERSION
+BASHRC=$HOME/tmp/curl-bashrc
 
 CLI="$(basename "$IMAGE")"
 
@@ -17,22 +17,20 @@ mkdir -p $HOME/tmp
 
 # setup bash env here
 cat <<___EOF___ >$BASHRC
-# File is created dynamically and used by the az-cli container
+# File is created dynamically and used by the curl container
 
+set -o
 export PATH=.:$HOME/bin:$PATH
 export PS1="[$CLI] \s\$ "
-alias k=kubectl
 
 ___EOF___
 
 username="${USER:-unknown}"
 cname="${CLI//:/-}-$username-$$"
 
-docker run --rm --name az-cli-$username-$$ -it --entrypoint bash \
+docker run --rm --name $cname -it --entrypoint bash \
   -v $BASHRC:/root/.bashrc \
   -v ${HOME}/.ssh:/root/.ssh \
-  -v ~/.kube:/root/.kube \
   -v ~/bin:/root/bin \
-  -v ~/.azure:/root/.azure \
   -w /root \
   "$IMAGE"
